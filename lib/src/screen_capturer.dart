@@ -49,8 +49,20 @@ class ScreenCapturer {
       await _channel.invokeMethod('requestAccess', arguments);
     }
   }
+  
+  Future<CapturedData?> getCapturedData(File imageFile) async {
+    Uint8List imageBytes = imageFile.readAsBytesSync();
+    final decodedImage = await decodeImageFromList(imageBytes);
 
-  Future<CapturedData?> capture({
+    return CapturedData(
+      imagePath: imagePath,
+      imageWidth: decodedImage.width,
+      imageHeight: decodedImage.height,
+      base64Image: base64Encode(imageBytes),
+    );
+  }
+
+  Future<File?> capture({
     String? imagePath,
     CaptureMode mode = CaptureMode.region,
     bool silent = true,
@@ -65,16 +77,8 @@ class ScreenCapturer {
       imagePath: imagePath,
       silent: silent,
     );
-    if (imageFile.existsSync()) {
-      Uint8List imageBytes = imageFile.readAsBytesSync();
-      final decodedImage = await decodeImageFromList(imageBytes);
-
-      return CapturedData(
-        imagePath: imagePath,
-        imageWidth: decodedImage.width,
-        imageHeight: decodedImage.height,
-        base64Image: base64Encode(imageBytes),
-      );
+    if (await imageFile.exists()) {
+      return imageFile;
     }
     return null;
   }
