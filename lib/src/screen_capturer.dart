@@ -55,7 +55,7 @@ class ScreenCapturer {
     final decodedImage = await decodeImageFromList(imageBytes);
 
     return CapturedData(
-      imagePath: imagePath,
+      imagePath: imageFile.path,
       imageWidth: decodedImage.width,
       imageHeight: decodedImage.height,
       base64Image: base64Encode(imageBytes),
